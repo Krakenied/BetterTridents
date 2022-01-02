@@ -60,7 +60,7 @@ public class BetterTridents extends JavaPlugin {
                         return;
                     }
 
-                    this.getServer().getLogger().info("Tridents will be rescued using reflection (field: '" + tridentDamageDealtField.getName() + "')!");
+                    this.getLogger().info("Tridents will be rescued using reflection (field: '" + tridentDamageDealtField.getName() + "')!");
 
                     this.reload(true);
                     pluginCommand.setExecutor(new ReloadCommand(this));
@@ -83,38 +83,38 @@ public class BetterTridents extends JavaPlugin {
     }
 
     public void reload(boolean firstLoad) {
-        this.getServer().getLogger().info("Reloading the plugin and it's configuration...");
+        this.getLogger().info("Reloading the plugin and it's configuration...");
         this.settings.reload();
 
         if (!firstLoad) {
-            this.getServer().getLogger().info("Unregistering all the plugin's listeners from all handlers lists...");
+            this.getLogger().info("Unregistering all the plugin's listeners from all handlers lists...");
             final int listenerCount = HandlerList.getRegisteredListeners(this).size();
             HandlerList.unregisterAll(this);
-            this.getServer().getLogger().info("Successfully unregistered " + listenerCount + " plugin's listeners!");
+            this.getLogger().info("Successfully unregistered " + listenerCount + " plugin's listeners!");
         }
 
         if (Setting.DROP_BEDROCK_CHANCE.getBoolean(this)) {
-            this.getServer().getLogger().info("Registering bedrock drop chance listener...");
+            this.getLogger().info("Registering bedrock drop chance listener...");
             this.getServer().getPluginManager().registerEvents(new DropListener(), this);
         }
 
         if (Setting.BEDROCK_IMPALING.getBoolean(this)) {
-            this.getServer().getLogger().info("Registering bedrock impaling listener...");
+            this.getLogger().info("Registering bedrock impaling listener...");
             this.getServer().getPluginManager().registerEvents(new ImpalingListener(), this);
         }
 
         if (Setting.RETURN_TO_OFFHAND.getBoolean(this)) {
-            this.getServer().getLogger().info("Registering return to offhand listener...");
+            this.getLogger().info("Registering return to offhand listener...");
             this.getServer().getPluginManager().registerEvents(new OffhandListener(this), this);
         }
 
         if (Setting.DISABLE_LOYALTY_PORTALS.getBoolean(this)) {
-            this.getServer().getLogger().info("Registering disable loyalty portals listener...");
+            this.getLogger().info("Registering disable loyalty portals listener...");
             this.getServer().getPluginManager().registerEvents(new PortalListener(), this);
         }
 
         if (Setting.VOID_SAVING.getBoolean(this)) {
-            this.getServer().getLogger().info("Registering void saving listener...");
+            this.getLogger().info("Registering void saving listener...");
             this.getServer().getPluginManager().registerEvents(new TridentThrowListener(this), this);
         }
 
