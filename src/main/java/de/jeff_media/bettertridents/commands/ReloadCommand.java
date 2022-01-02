@@ -20,7 +20,7 @@ public class ReloadCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (sender.hasPermission(Permission.RELOAD.getValue())) {
+        if (!sender.hasPermission(Permission.RELOAD.getValue())) {
             sender.sendMessage(PaperComponents.legacySectionSerializer().deserialize(this.plugin.getServer().getPermissionMessage()));
             return true;
         }
