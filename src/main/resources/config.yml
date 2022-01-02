@@ -37,20 +37,5 @@ return-to-offhand: true
 # When enabled, tridents enchanted with loyalty will be prevented from travelling through portals
 disable-loyalty-portals: true
 
-# Should we check for updates?
-# When enabled, a message is printed in the console if a new version has
-# been found, and OPs will be notified when they join the server.
-# When set to true, we will check for updates on startup and every X hours
-# When set to on-startup, we will only check on startup
-# When set to false, don't check for updates
-check-for-updates: true
-
-# When check-for-updates is true, BetterTridents will check every X hours
-update-check-interval: 4
-
 # Debug mode - you probably don't want this
 debug: false
-
-# NEVER CHANGE THE VALUES BELOW!
-plugin-version: ${project.version}
-config-version: ${config.version}

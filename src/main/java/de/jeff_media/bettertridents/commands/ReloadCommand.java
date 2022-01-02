@@ -1,26 +1,32 @@
 package de.jeff_media.bettertridents.commands;
 
-import de.jeff_media.bettertridents.Main;
-import de.jeff_media.bettertridents.config.Permissions;
-import org.bukkit.ChatColor;
+import de.jeff_media.bettertridents.BetterTridents;
+import de.jeff_media.bettertridents.config.Permission;
+import io.papermc.paper.text.PaperComponents;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class ReloadCommand implements CommandExecutor {
 
-    private final Main main = Main.getInstance();
+    private final BetterTridents plugin;
+
+    public ReloadCommand(@NotNull BetterTridents plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
-
-        if(!sender.hasPermission(Permissions.RELOAD)) {
-            sender.sendMessage(command.getPermissionMessage());
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (sender.hasPermission(Permission.RELOAD.getValue())) {
+            sender.sendMessage(PaperComponents.legacySectionSerializer().deserialize(this.plugin.getServer().getPermissionMessage()));
             return true;
         }
 
-        main.reload();
-        sender.sendMessage(ChatColor.DARK_GREEN + main.getDescription().getName() + " v" + main.getDescription().getVersion() + ChatColor.GREEN + " has been reloaded.");
+        this.plugin.reload();
+        sender.sendMessage(Component.text("BetterTridents and it's configuration have been reloaded successfully!", NamedTextColor.GREEN));
         return true;
     }
 }

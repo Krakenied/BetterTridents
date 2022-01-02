@@ -1,14 +1,11 @@
 package de.jeff_media.bettertridents.listeners;
 
-import de.jeff_media.bettertridents.Main;
-import de.jeff_media.bettertridents.config.Config;
-import de.jeff_media.bettertridents.config.Permissions;
+import de.jeff_media.bettertridents.BetterTridents;
+import de.jeff_media.bettertridents.config.Permission;
 import de.jeff_media.bettertridents.tasks.WatchTrident;
-import de.jeff_media.bettertridents.utils.EnchantmentUtils;
-import org.bukkit.Bukkit;
+import de.jeff_media.bettertridents.utils.EnchantmentUtil;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
@@ -17,76 +14,52 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 public class TridentThrowListener implements Listener {
 
-    private final Main main = Main.getInstance();
+    private final BetterTridents plugin;
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onTridentThrow(ProjectileLaunchEvent event) {
-        if (event.getEntityType() != EntityType.TRIDENT) return;
-        main.debug("Trident throw Listener: ProjectileLaunchEvent");
-
-        Trident trident = (Trident) event.getEntity();
-        if (!(trident.getShooter() instanceof Player)) {
-            main.debug("This trident wasn't thrown by a player.");
-            return;
-        }
-        Player player = (Player) trident.getShooter();
-
-        // Impaling
-        int impaling = EnchantmentUtils.getLevelFromTrident(player, Enchantment.IMPALING);
-        main.debug("Applying impaling level " + impaling);
-        EnchantmentUtils.registerImpaling((Trident) event.getEntity(), impaling);
-
-        // Offhand
-        if (player.getInventory().getItemInMainHand().getType() == Material.TRIDENT) return;
-        if (player.getInventory().getItemInOffHand().getType() != Material.TRIDENT) return;
-        trident.getPersistentDataContainer().set(Main.OFFHAND_TAG, PersistentDataType.BYTE, (byte) 1);
-        main.debug("This trident was thrown by the offhand.");
+    public TridentThrowListener(@NotNull BetterTridents plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void applyLoyalty(ProjectileLaunchEvent event) {
-        main.debug("VoidListener");
-        if (event.getEntityType() != EntityType.TRIDENT) {
-            main.debug("Not a trident");
+    public void onProjectileLaunchImpaling(@NotNull ProjectileLaunchEvent event) {
+        if (!(event.getEntity() instanceof final Trident trident && trident.getShooter() instanceof final Player player)) {
             return;
         }
-        Trident trident = (Trident) event.getEntity();
-        if (!(trident.getShooter() instanceof Player)) {
-            main.debug("Not shot by player");
+
+        final int impaling = EnchantmentUtil.getLevelFromTrident(player, Enchantment.IMPALING);
+        EnchantmentUtil.registerImpaling(trident, impaling);
+
+        if (player.getInventory().getItemInMainHand().getType() == Material.TRIDENT || player.getInventory().getItemInOffHand().getType() != Material.TRIDENT) {
             return;
         }
-        Player player = (Player) trident.getShooter();
-        if(!player.hasPermission(Permissions.SAVE_VOID)) return;
-        ItemStack tridentItem = null;
-        if (player.getInventory().getItemInOffHand() != null) {
-            if (player.getInventory().getItemInOffHand().getType() == Material.TRIDENT) {
-                tridentItem = player.getInventory().getItemInOffHand();
-            }
-        }
-        if (player.getInventory().getItemInMainHand() != null) {
-            if (player.getInventory().getItemInMainHand().getType() == Material.TRIDENT) {
-                tridentItem = player.getInventory().getItemInMainHand();
-            }
-        }
-        if (tridentItem == null) {
-            main.debug("tridentItem not found");
+
+        trident.getPersistentDataContainer().set(BetterTridents.OFFHAND_TAG, PersistentDataType.BYTE, (byte) 1);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onProjectileLaunchLoyalty(@NotNull ProjectileLaunchEvent event) {
+        if (!(event.getEntity() instanceof final Trident trident) || !(trident.getShooter() instanceof final Player player) || !(player.hasPermission(Permission.SAVE_VOID.getValue()))) {
             return;
         }
-        if (!EnchantmentUtils.hasLoyalty(tridentItem)) {
-            main.debug("No loyalty");
+
+        final ItemStack tridentItem;
+        if (player.getInventory().getItemInMainHand().getType() == Material.TRIDENT) {
+            tridentItem = player.getInventory().getItemInMainHand();
+        } else if (player.getInventory().getItemInOffHand().getType() == Material.TRIDENT) {
+            tridentItem = player.getInventory().getItemInOffHand();
+        }  else {
+            tridentItem = null;
+        }
+
+        if (tridentItem == null || !EnchantmentUtil.hasLoyalty(tridentItem)) {
             return;
         }
-        if(!main.getConfig().getBoolean(Config.VOID_SAVING)) {
-            main.debug("Void Saving disabled");
-            return;
-        }
-        main.setLoyal(trident);
-        main.debug("New task: WatchTrident");
-        new WatchTrident(trident).runTaskTimer(main,1,1);
-        Bukkit.getScheduler().runTaskLater(main,() ->main.removeLoyal(trident),1200);
+
+        new WatchTrident(this.plugin, trident).runTaskTimer(this.plugin,1L,1L);
     }
 
 }

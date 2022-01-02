@@ -1,28 +1,34 @@
 name: ${project.name}
-main: ${spigot.main}
+provides: []
 version: ${project.version}
-prefix: ${spigot.prefix}
-api-version: "1.13"
+description: A plugin that adds some useful features to tridents.
 authors: [mfnalex, JEFF Media GbR]
-website: "https://www.mfnalex.de"
-database: false
+contributors: [Krakenied]
+website: https://www.mfnalex.de
+
+main: ${project.groupId}.${project.artifactId}.${project.name}
 load: STARTUP
-awareness:
-  - !@UTF8
+depend: []
+softdepend: []
+api-version: 1.18
+libraries: []
+
 commands:
-  bettertridents:
-    description: Reloads the config file
-    permission: bettertridents.reload
+  ${project.artifactId}:
+    description: Reloads ${project.name}.
+    permission: ${project.artifactId}.reload
     usage: /<command>
+
 permissions:
-  bettertridents.*:
-    description: Allows to use all BetterTridents features
+  ${project.artifactId}.*:
+    default: op
+    description: Players with this permission will be able to use all of the plugin features.
     children:
-      - bettertridents.savevoid
-    default: op
-  bettertridents.savevoid:
-    description: Prevents tridents enchanted with loyalty to get lost in the void
+      ${project.artifactId}.savevoid: true
+      ${project.artifactId}.reload: true
+  ${project.artifactId}.savevoid:
     default: true
-  bettertridents.reload:
-    description: Allows to reload the config file using /bettertridents
-    default: op
+    description: Players with this permission will not lose their loyalty-enchanted tridents after throwing them into the void.
+  ${project.artifactId}.reload:
+    default: false
+    description: Players with this permission will be able to reload the plugin by using /${project.artifactId} command.

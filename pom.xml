@@ -5,164 +5,51 @@
 
     <groupId>de.jeff_media</groupId>
     <name>BetterTridents</name>
-    <artifactId>BetterTridents</artifactId>
-    <version>2.2.0</version>
+    <artifactId>bettertridents</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
 
     <properties>
-        <spigot.prefix>${project.name}</spigot.prefix>
-        <spigot.main>${project.groupId}.bettertridents.Main</spigot.main>
-
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-        <config.version>${maven.build.timestamp}</config.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
-
 
     <build>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>config.yml</include>
+                    <include>plugin.yml</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.1-SNAPSHOT</version>
                 <configuration>
-                    <finalName>${project.name}</finalName>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
-                <configuration>
-                    <relocations>
-                        <!-- Using the maven-shade-plugin to shade and relocate the UpdateChecker -->
-                        <!-- Replace "your.package" with your plugin's package name -->
-                        <relocation>
-                            <pattern>de.jeff_media.updatechecker</pattern>
-                            <shadedPattern>de.jeff_media.bettertridents.updatechecker</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>de.jeff_media.bettertridents.bstats</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.apache</pattern>
-                            <shadedPattern>de.jeff_media.bettertridents.lib.org.apache</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.codehaus</pattern>
-                            <shadedPattern>de.jeff_media.bettertridents.lib.org.codehaus</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.intellij</pattern>
-                            <shadedPattern>de.jeff_media.bettertridents.lib.org.intellij</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.jetbrains</pattern>
-                            <shadedPattern>de.jeff_media.bettertridents.lib.org.jetbrains</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>de.jeff_media.jefflib</pattern>
-                            <shadedPattern>de.jeff_media.bettertridents.jefflib</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>testCompile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <finalName>${project.name}-${project.version}</finalName>
                 </configuration>
             </plugin>
         </plugins>
-
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>3.4.1</version>
-            </extension>
-        </extensions>
-
     </build>
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>jeff-media-gbr</id>
-            <url>https://repo.jeff-media.de/maven2</url>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <!-- Spigot and PaperLib -->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.17-R0.1-SNAPSHOT</version>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>de.jeff_media</groupId>
-            <artifactId>JeffLib</artifactId>
-            <version>4.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.jeff_media</groupId>
-            <artifactId>SpigotUpdateChecker</artifactId>
-            <version>1.3.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>2.2.1</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>jeff-ftp</id>
-            <url>ftps://ftp.jeff-media.de/maven2</url>
-        </repository>
-    </distributionManagement>
-
 </project>
